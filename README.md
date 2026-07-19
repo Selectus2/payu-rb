@@ -57,9 +57,33 @@ refund.status(result.mihpayid)
 reported status is informational only; always follow up with
 `verify_payment` before treating a transaction as successful.
 
-For Rails, expose `GET /checkout/:id/pay` that renders an auto-submit form
-page. For mobile, return `{ payment_url:, params: }` as JSON and have the
-app open `payment_url` in a WebView, POSTing the params.
+## Auto-submit checkout page (web + mobile)
+
+`form.to_html` renders a complete, self-contained HTML page that
+auto-submits to PayU on load — a hidden form with one input per field,
+`onload="document.forms[0].submit()"`, and a `<noscript>` fallback button.
+Values are HTML-escaped.
+
+Expose one route that renders it:
+
+```ruby
+# GET /checkout/:id/pay
+def pay
+  form = client.build_payment(...)
+  render html: form.to_html.html_safe, content_type: "text/html"
+end
+```
+
+That single public URL (e.g. `https://app.example.com/checkout/123/pay`) is
+all any client needs — no client-side form building required either way:
+
+- **Web** — redirect the browser to it, or link to it.
+- **Mobile** — point a WebView at the same URL; the page auto-submits to
+  PayU itself, so the app never needs to construct the POST or handle
+  `fields` directly.
+
+`form.to_h` (`{ payment_url:, fields: }`) is also available if you'd rather
+hand the raw data to your own frontend code instead of using `to_html`.
 
 ## Error handling
 

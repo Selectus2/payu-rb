@@ -32,6 +32,7 @@ require "payu/refund"
 #   )
 #   form.payment_url  # => URL to POST form.fields to (form submit or WebView)
 #   form.fields        # => Hash of all form fields including :hash
+#   form.to_html        # => self-contained auto-submitting checkout page
 #
 #   # 2. Verify an inbound callback/redirect's hash (never trust it for final state)
 #   callback = client.verify_callback(params)
@@ -43,8 +44,8 @@ require "payu/refund"
 #   result.mihpayid
 #   result.raw        # full parsed JSON, for audit logging
 #
-# For Rails, expose GET /checkout/:id/pay that renders an auto-submit form page.
-# For mobile, return { payment_url:, params: } as JSON; the app opens payment_url
-# in a WebView posting the params.
+# form.to_html renders a complete auto-submitting checkout page — expose it
+# from one GET route and that URL is all any client needs: redirect a
+# browser to it, or point a mobile WebView at it. See README for details.
 module Payu
 end
