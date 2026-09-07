@@ -80,10 +80,10 @@ RSpec.describe Payu::Hash do
       }
     end
 
-    it "returns true when hash matches" do
+    it "returns truthy (matched form name) when hash matches" do
       correct_hash = described_class.response(params: callback_params, salt: salt)
       params_with_hash = callback_params.merge(hash: correct_hash)
-      expect(described_class.valid_response?(params: params_with_hash, salt: salt)).to be true
+      expect(described_class.valid_response?(params: params_with_hash, salt: salt)).to eq("plain")
     end
 
     it "returns false when hash is tampered" do

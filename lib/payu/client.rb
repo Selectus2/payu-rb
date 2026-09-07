@@ -54,8 +54,10 @@ module Payu
     # PayU's reported status here is informational only — never trust it
     # for final state; always follow up with #verify_payment.
     def verify_callback(params)
-      valid = Payu::Hash.valid_response?(params: params, salt: @config.salt)
-      CallbackResult.new(params: params, valid: valid)
+      result = Payu::Hash.valid_response?(params: params, salt: @config.salt)
+      valid = result != false
+      matched_form = valid ? result : nil
+      CallbackResult.new(params: params, valid: valid, matched_hash_form: matched_form)
     end
 
     # Server-to-server reconciliation — the source of truth for transaction

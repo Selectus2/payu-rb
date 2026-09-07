@@ -5,11 +5,12 @@ module Payu
   # This is informational only: PayU's reported status here must not be
   # trusted for final state. Always follow up with Client#verify_payment.
   class CallbackResult
-    attr_reader :params, :valid
+    attr_reader :params, :valid, :matched_hash_form
 
-    def initialize(params:, valid:)
+    def initialize(params:, valid:, matched_hash_form: nil)
       @params = params
       @valid = valid
+      @matched_hash_form = matched_hash_form
     end
 
     def valid? = @valid
@@ -27,5 +28,9 @@ module Payu
     def udf3 = @params[:udf3]
     def udf4 = @params[:udf4]
     def udf5 = @params[:udf5]
+
+    def additional_charges
+      Payu::Hash.extract_additional_charges(@params)
+    end
   end
 end
